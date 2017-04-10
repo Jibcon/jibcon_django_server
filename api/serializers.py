@@ -7,6 +7,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('email',)
 
+class UserSignedSerializer(serializers.Serializer):
+    signed = serializers.BooleanField(required=True)
+
 # class UserinfoSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = models.Userinfo
