@@ -30,7 +30,8 @@ class SocialSignUpOrIn(generics.CreateAPIView):
 
         type = request.data['type']
         token = request.data['token']
-        if type is 'facebook':
+        print(type)
+        if type == 'facebook':
             from social import facebook
             userinfo = facebook.get_userinfo_from_facebook(token)
 
