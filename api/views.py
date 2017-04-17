@@ -1,5 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
@@ -124,7 +124,7 @@ class UserSignedCheck(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         print('UserSignedCheck/post')
         if not self.is_valid_requestbody():
-            return Response({'detail': "Unexpected arguments", 'args': ['email', 'token']},
+            return Response({'detail': "Unexpected arguments", 'args': ['username', 'token']},
                             status=status.HTTP_400_BAD_REQUEST)
 
         # phonenumber or email
@@ -135,23 +135,34 @@ class UserSignedCheck(generics.CreateAPIView):
         serializer = self.serializer_class({ "signed" : self.is_signed(username, token) })
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-from django.contrib.auth.decorators import login_required
 from rest_framework import mixins
-
-# @login_required
 class DeviceList(mixins.ListModelMixin,
                 mixins.CreateModelMixin,
                 generics.GenericAPIView):
+    permission_classes = (IsAuthenticated,)
     from .models import Device
     queryset = Device.objects.all()
     from .serializers import DeviceSerializer
     serializer_class = DeviceSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(
+            user=self.request.user,
+        )
+
+    def is_valid_requestbody(self):
+        # todo implement
+        return True
+
     def get(self, request, *args, **kwargs):
-        queryset = self.queryset.filter(user=request.user)
+        self.queryset = self.queryset.filter(user=request.user)
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        if not self.is_valid_requestbody():
+            return Response({'detail': "Unexpected arguments", 'args': ['deviceType']},
+                            status=status.HTTP_400_BAD_REQUEST)
+
         return self.create(request, *args, **kwargs)
 
 class DeviceDetail():

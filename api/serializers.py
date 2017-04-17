@@ -57,8 +57,9 @@ class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         from .models import Device
         model = Device
-        field = {
+        fields = (
             'id',
             'deviceType',
             'deviceOnOffState',
-        }
+            'user_id',
+        )
