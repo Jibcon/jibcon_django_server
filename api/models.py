@@ -5,10 +5,12 @@ from django.contrib.auth.models import User
 
 
 # todo specify class fields
-# class Userinfo(models.Model):
-#     user = models.OneToOneField(settings.AUTH_USER_MODEL)
-#     social_type = models.CharField(verbose_name='Social_type', default='', max_length=255)
-#     profileImg = models.ImageField(verbose_name='profileImg')
+class UserInfo(models.Model):
+     user = models.OneToOneField(settings.AUTH_USER_MODEL)
+     age_range = models.CharField(max_length=20, default='')
+     gender = models.CharField(default='', max_length=10)
+     pic_url = models.URLField(default='')
+
 # class Houseinfo(models.Model):
 #     pass
 #

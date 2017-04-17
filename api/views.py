@@ -2,10 +2,11 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from api.serializers import UserSerializer
 from .serializers import DeviceSerializer
-from .models import Device
+from .models import Device, UserInfo
 from .permissions import IsOwnerOrSuperUser
 
 
@@ -48,45 +49,50 @@ class SocialSignUpOrIn(generics.CreateAPIView):
             from social import facebook
             userinfo = facebook.get_userinfo_from_facebook(token)
 
-        # todo createuser
         return self.post_to_user_sign_up_or_in(userinfo)
 
+class UserInfo(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
+    # queryset = User.objects.all()
 
-
-        from django.contrib.auth.models import User
-        # for test
-        user = User.objects.first()
-
-        serializer = self.serializer_class(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
 
 class UserSignUpOrIn(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
-    print('SignUpOrIn')
 
-    def auto_create_pwd(self):
-        return "1234qwer"
+    # def auto_create_pwd(self):
+    #     return "1234qwer"
+
+    def perform_create(self, serializer):
+        serializer.is_valid()
+        user = serializer.save()
+
+        from .models import UserInfo
+        UserInfo.objects.create(
+                user = user,
+                pic_url=self.request.data['pic_url'],
+                gender=self.request.data['gender'],
+                age_range= self.request.data['age_range']
+                                  )
 
     def post(self, request, *args, **kwargs):
-        print("post")
-
         log = "request data : "
         for each in request.data:
             log = log + each + ','
         print(log)
 
-        from django.contrib.auth.models import User
         try :
             user = User.objects.get(
                 username=request.data.get('username'),
             )
-            # token = Token.objects.create()
 
             serializer = self.serializer_class(user)
+
+            # return self.perform_create(serializer)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             pass
@@ -98,12 +104,7 @@ class UserSignUpOrIn(generics.CreateAPIView):
         # request.data['gender']
         # request.data['age_range']
 
-
-
-        # todo createuserinfo
-        return self.create(request,
-                           # data={'password': password},
-                           *args, **kwargs)
+        return self.perform_create(serializer)
 
 class UserSignedCheck(generics.CreateAPIView):
     from api.serializers import UserSignedSerializer
