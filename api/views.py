@@ -134,3 +134,25 @@ class UserSignedCheck(generics.CreateAPIView):
 
         serializer = self.serializer_class({ "signed" : self.is_signed(username, token) })
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+from django.contrib.auth.decorators import login_required
+from rest_framework import mixins
+
+# @login_required
+class DeviceList(mixins.ListModelMixin,
+                mixins.CreateModelMixin,
+                generics.GenericAPIView):
+    from .models import Device
+    queryset = Device.objects.all()
+    from .serializers import DeviceSerializer
+    serializer_class = DeviceSerializer
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.queryset.filter(user=request.user)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+class DeviceDetail():
+    pass

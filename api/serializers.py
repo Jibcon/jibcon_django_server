@@ -28,12 +28,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_or_create_token(self, obj):
         from rest_framework.authtoken.models import Token
-        token = Token.objects.get_or_create(user=self.instance)
-        print(token)
+        token, created = Token.objects.get_or_create(user=obj)
 
-        serializer = TokenSerializer(token[0])
+        serializer = TokenSerializer(token)
+        print(serializer.data)
+        return {'token': token.key}
 
-        return serializer.data
+        # serializer = TokenSerializer(token)
+
+        # return serializer.data
 
 
 
@@ -49,3 +52,13 @@ class UserSignedSerializer(serializers.Serializer):
 # class SignUpOrInSerializer(serializers.Serializer):
 #     type = serializers.CharField(required=True, allow_blank=False, max_length=255)
 #     token = serializers.CharField(required=True, allow_blank=False, max_length=255)
+
+class DeviceSerializer(serializers.ModelSerializer):
+    class Meta:
+        from .models import Device
+        model = Device
+        field = {
+            'id',
+            'deviceType',
+            'deviceOnOffState',
+        }

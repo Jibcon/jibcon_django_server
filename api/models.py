@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 # Create your models here.
 
 
@@ -13,3 +14,8 @@ from django.conf import settings
 #
 # class Deviceinfo(models.Model):
 #     pass
+
+class Device(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    deviceType = models.CharField(max_length=255,default="플러그")
+    deviceOnOffState = models.BooleanField(default=False)
