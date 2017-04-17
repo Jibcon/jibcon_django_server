@@ -127,3 +127,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     )
 }
+
+# Internal_domain
+INTERNAL_DOMAIN = "http://localhost:8000/"

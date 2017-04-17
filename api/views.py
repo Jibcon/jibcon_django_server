@@ -14,7 +14,6 @@ from .permissions import IsOwnerOrSuperUser
 class SocialSignUpOrIn(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
-    print('SocialSignUpOrIn')
 
     def is_valid_social(self):
         from social import conf
@@ -27,8 +26,8 @@ class SocialSignUpOrIn(generics.CreateAPIView):
 
     def post_to_user_sign_up_or_in(self, userinfo):
         try:
-            domain = "http://52.79.142.130/"
-            # domain = "http://localhost:8000/"
+            from jibcon_django_server.settings import INTERNAL_DOMAIN
+            domain = INTERNAL_DOMAIN
             endpoints = "api/user_sign_up_or_in/"
             import requests
             response = requests.post(domain + endpoints, data=userinfo)
@@ -97,20 +96,16 @@ class UserSignUpOrIn(generics.CreateAPIView):
         except User.DoesNotExist:
             pass
 
-        # password = self.auto_create_pwd()
+        serializer = self.get_serializer(data=request.data)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
 
-        # request.data['pic_url']
-        # request.data['name']
-        # request.data['gender']
-        # request.data['age_range']
-
-        return self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class UserSignedCheck(generics.CreateAPIView):
     from api.serializers import UserSignedSerializer
     serializer_class = UserSignedSerializer
     permission_classes = (AllowAny,)
-    print('UserSigninCheck')
 
     def is_signed(self, username, token):
         # todo implement validation
@@ -126,7 +121,6 @@ class UserSignedCheck(generics.CreateAPIView):
         return True
 
     def post(self, request, *args, **kwargs):
-        print('UserSignedCheck/post')
         if not self.is_valid_requestbody():
             return Response({'detail': "Unexpected arguments", 'args': ['username', 'token']},
                             status=status.HTTP_400_BAD_REQUEST)
