@@ -22,6 +22,17 @@ class SocialSignUpOrIn(generics.CreateAPIView):
             print('is_valid_social : False')
             return False
 
+    def post_to_user_sign_up_or_in(self, userinfo):
+        try:
+            # domain = "http://0.0.0.0:8000/"
+            domain = "http://localhost:8000/"
+            endpoints = "api/user_sign_up_or_in/"
+            import requests
+            response = requests.post(domain + endpoints, data=userinfo)
+            return response
+        except:
+            pass
+
     def post(self, request, *args, **kwargs):
         print('SocialSignUpOrIn/post')
         if not self.is_valid_social():
@@ -36,13 +47,59 @@ class SocialSignUpOrIn(generics.CreateAPIView):
             userinfo = facebook.get_userinfo_from_facebook(token)
 
         # todo createuser
-        # todo createuserinfo
+        return self.post_to_user_sign_up_or_in(userinfo)
+
+
+
         from django.contrib.auth.models import User
         # for test
         user = User.objects.first()
 
         serializer = self.serializer_class(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+class UserSignUpOrIn(generics.CreateAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
+    print('SignUpOrIn')
+
+    def auto_create_pwd(self):
+        return "1234qwer"
+
+    def post(self, request, *args, **kwargs):
+        print("post")
+
+        log = "request data : "
+        for each in request.data:
+            log = log + each + ','
+        print(log)
+
+        from django.contrib.auth.models import User
+        try :
+            user = User.objects.get(
+                username=request.data.get('username'),
+            )
+            serializer = self.serializer_class(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            pass
+
+        # password = self.auto_create_pwd()
+
+        # request.data['pic_url']
+        # request.data['name']
+        # request.data['gender']
+        # request.data['age_range']
+
+
+
+        # todo createuserinfo
+        return self.create(request,
+                           # data={'password': password},
+                           *args, **kwargs)
 
 class UserSignedCheck(generics.CreateAPIView):
     from api.serializers import UserSignedSerializer

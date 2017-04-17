@@ -1,6 +1,8 @@
+#-*- coding: utf-8 -*-
 import requests
 
 
+social_type = "facebook"
 def get_userinfo_from_facebook(token):
     URL = 'https://graph.facebook.com/me'
     require_fields = [
@@ -21,14 +23,12 @@ def get_userinfo_from_facebook(token):
     fields = ""
     for field in require_fields:
         fields = fields + field +', '
-    print(fields)
+    # print(fields)
     fields = fields[:-2]
-    print(fields)
+    # print(fields) # 뒤에 , 제거
 
     params = {'access_token': token,
               'fields': fields}
-
-
 
     try:
         r = requests.get(URL, params=params)
@@ -38,5 +38,9 @@ def get_userinfo_from_facebook(token):
 
     pic_request_url = "https://graph.facebook.com/" + r['id']+"/picture"
     pic_url = requests.get(pic_request_url , params= {'access_token': token}).url
+
+    # 자동생성아디 facebook_id
+    r['username'] = social_type+"_"+r['id']
+    del r['id']
 
     return {**r, **{'pic_url': pic_url}}
