@@ -27,7 +27,7 @@ class SocialSignUpOrIn(generics.CreateAPIView):
 
     def post_to_user_sign_up_or_in(self, userinfo):
         try:
-            domain = "http://0.0.0.0:8000/"
+            domain = "http://52.79.142.130/"
             # domain = "http://localhost:8000/"
             endpoints = "api/user_sign_up_or_in/"
             import requests
