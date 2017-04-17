@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
 from api.serializers import UserSerializer
+from .serializers import DeviceSerializer
+from .models import Device
+from .permissions import IsOwnerOrSuperUser
 
 
 # Create your views here
@@ -139,10 +142,11 @@ from rest_framework import mixins
 class DeviceList(mixins.ListModelMixin,
                 mixins.CreateModelMixin,
                 generics.GenericAPIView):
-    permission_classes = (IsAuthenticated,)
+
+    permission_classes = (IsAuthenticated,IsOwnerOrSuperUser)
     from .models import Device
     queryset = Device.objects.all()
-    from .serializers import DeviceSerializer
+
     serializer_class = DeviceSerializer
 
     def perform_create(self, serializer):
@@ -165,5 +169,8 @@ class DeviceList(mixins.ListModelMixin,
 
         return self.create(request, *args, **kwargs)
 
-class DeviceDetail():
-    pass
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+class DeviceDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Device.objects.all().order_by('-uploaded_date')
+    serializer_class = DeviceSerializer
+    permission_classes = (IsAuthenticated, IsOwnerOrSuperUser)
