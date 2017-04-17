@@ -3,8 +3,6 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-
 from api.serializers import UserSerializer
 
 
@@ -83,6 +81,8 @@ class UserSignUpOrIn(generics.CreateAPIView):
             user = User.objects.get(
                 username=request.data.get('username'),
             )
+            # token = Token.objects.create()
+
             serializer = self.serializer_class(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
