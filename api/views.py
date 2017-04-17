@@ -3,11 +3,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from api.serializers import UserSerializer
 
 
-# Create your views here.
+# Create your views here
 class SocialSignUpOrIn(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
@@ -29,7 +30,7 @@ class SocialSignUpOrIn(generics.CreateAPIView):
             endpoints = "api/user_sign_up_or_in/"
             import requests
             response = requests.post(domain + endpoints, data=userinfo)
-            return response
+            return Response(response)
         except:
             pass
 

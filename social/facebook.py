@@ -4,6 +4,7 @@ import requests
 
 social_type = "facebook"
 def get_userinfo_from_facebook(token):
+
     URL = 'https://graph.facebook.com/me'
     require_fields = [
         'id',
@@ -38,6 +39,8 @@ def get_userinfo_from_facebook(token):
 
     pic_request_url = "https://graph.facebook.com/" + r['id']+"/picture"
     pic_url = requests.get(pic_request_url , params= {'access_token': token}).url
+
+
 
     # 자동생성아디 facebook_id
     r['username'] = social_type+"_"+r['id']

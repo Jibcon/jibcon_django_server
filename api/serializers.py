@@ -5,7 +5,15 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         from django.contrib.auth.models import User
         model = User
-        fields = ('email',)
+        fields = (
+            'username',
+            'email',
+            # todo unicode
+        # utf-8 = unicode(euckr, 'euc-kr').encode('utf-8')
+
+            # 'first_name',
+            # 'last_name',
+                  )
 
 class UserSignedSerializer(serializers.Serializer):
     signed = serializers.BooleanField(required=True)
