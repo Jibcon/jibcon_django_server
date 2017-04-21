@@ -71,6 +71,8 @@ class DeviceSerializer(serializers.ModelSerializer):
         model = Device
         fields = (
             'id',
+            'deviceCom',
+            'deviceName',
             'deviceType',
             'deviceOnOffState',
             'user_id',
