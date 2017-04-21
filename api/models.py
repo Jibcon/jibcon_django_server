@@ -17,7 +17,16 @@ class UserInfo(models.Model):
 # class Deviceinfo(models.Model):
 #     pass
 
+variableDeviceTypes = [
+    "에어컨",
+    "선풍기",
+    "전구",
+    "플러그",
+]
+
 class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    deviceType = models.CharField(max_length=255,default="플러그")
+    deviceCom = models.CharField(max_length=255,default="찬주 일렉트로닉스")
+    deviceName = models.CharField(max_length=255,default="동그라미플러그")
+    deviceType = models.CharField(max_length=255,default=variableDeviceTypes[0])
     deviceOnOffState = models.BooleanField(default=False)
