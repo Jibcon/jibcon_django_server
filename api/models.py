@@ -11,11 +11,20 @@ class UserInfo(models.Model):
      gender = models.CharField(default='', max_length=10)
      pic_url = models.URLField(default='')
 
-# class Houseinfo(models.Model):
-#     pass
-#
-# class Deviceinfo(models.Model):
-#     pass
+variableHouseTypes = [
+    "아파트",
+    "사무실",
+    "자취방",
+    "저택",
+    "모스크",
+]
+
+class House(models.Model):
+    adminUser = models.ForeignKey(User, on_delete=models.CASCADE) # todo on_delete -> when all of groupmember deleted
+    houseType = models.CharField(max_length=255, default=variableHouseTypes[2])
+    houseName = models.CharField(max_length=255, default="찬주의 자취방")
+    houseIntro = models.CharField(max_length=255, default="고양이가 있는 짠주의 자취방이에욥")
+    houseLocation = models.CharField(max_length=255, default="서울시 성북구 안암동 1, 고려대학교 파이빌 91호")
 
 variableDeviceTypes = [
     "에어컨",

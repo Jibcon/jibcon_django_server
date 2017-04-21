@@ -10,4 +10,6 @@ urlpatterns = [
     url(r'^user_info/$', views.UserInfo.as_view(), name='user_sign_up_or_in'),
     url(r'^devices/$', views.DeviceList.as_view(), name='device_list'),
     url(r'^devices/(?P<pk>[0-9]+)/$', views.DeviceDetail.as_view(), name='device_detail'),
+    url(r'^houses/$', views.HouseList.as_view(), name='house_list'),
+    url(r'^houses/(?P<pk>[0-9]+)/$', views.HouseDetail.as_view(), name='house_detail'),
 ]

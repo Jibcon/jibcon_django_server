@@ -77,3 +77,25 @@ class DeviceSerializer(serializers.ModelSerializer):
             'deviceOnOffState',
             'user_id',
         )
+
+class HouseSerializer(serializers.ModelSerializer):
+    adminUserName = serializers.SerializerMethodField('get_adminuser_name')
+
+    class Meta:
+        from .models import House
+        model = House
+        fields = (
+        'id',
+        'houseType',
+        'houseName',
+        'houseIntro',
+        'houseLocation',
+        'adminUser',
+        'adminUserName',
+        )
+
+    def get_adminuser_name(self, obj):
+        if (obj.adminUser):
+            return obj.adminUser.get_full_name()
+        else:
+            return ""

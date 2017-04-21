@@ -169,3 +169,41 @@ class DeviceDetail(RetrieveUpdateDestroyAPIView):
     queryset = Device.objects.all().order_by('-uploaded_date')
     serializer_class = DeviceSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrSuperUser)
+
+from .models import House
+class HouseList(mixins.ListModelMixin,
+                mixins.CreateModelMixin,
+                generics.GenericAPIView):
+
+    from .serializers import HouseSerializer
+    queryset = House.objects.all()
+    serializer_class = HouseSerializer
+    permission_classes = (IsAuthenticated, IsOwnerOrSuperUser)
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save(adminUser=self.request.user)
+
+    def is_valid_requestbody(self):
+        # todo implement
+        return True
+
+    def get(self, request, *args, **kwargs):
+        self.queryset = self.queryset.filter(adminUser=request.user)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not self.is_valid_requestbody():
+            return Response({'detail': "Unexpected arguments",},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(data=self.request.data)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+class HouseDetail(RetrieveUpdateDestroyAPIView):
+    queryset = House.objects.all()
+    serializer_class = DeviceSerializer
+    permission_classes = (IsAuthenticated, IsOwnerOrSuperUser)
