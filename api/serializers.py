@@ -20,7 +20,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField('get_or_create_token')
-    userInfo = serializers.SerializerMethodField('get_user_info')
+    # userInfo = serializers.SerializerMethodField('get_user_info')
 
     class Meta:
         from django.contrib.auth.models import User
@@ -29,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'token',
-            'userInfo'
+            # 'userInfo'
             # todo unicode
         # utf-8 = unicode(euckr, 'euc-kr').encode('utf-8')
 
