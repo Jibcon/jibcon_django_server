@@ -37,10 +37,14 @@ def get_userinfo_from_facebook(token):
     except:
         pass
 
-    pic_request_url = "https://graph.facebook.com/" + r['id']+"/picture"
-    pic_url = requests.get(pic_request_url , params= {'access_token': token}).url
-
-
+    if 'id' in r:
+        print("id is not None")
+        pic_request_url = "https://graph.facebook.com/" + r['id']+"/picture"
+        pic_url = requests.get(pic_request_url , params= {'access_token': token}).url
+    else:
+        print("id is None, invalid facebook token")
+        # error
+        return
 
     # 자동생성아디 facebook_id
     r['username'] = social_type+"_"+r['id']

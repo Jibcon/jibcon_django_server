@@ -21,6 +21,6 @@ from jibcon_django_server.swagger_views import schema_view
 urlpatterns = [
     url(r'^$', schema_view),
     url(r'^admin/', admin.site.urls),
-     url(r'^api/', include('api.urls',
+    url(r'^api/', include('api.urls',
                                 namespace='api')),
 ]
