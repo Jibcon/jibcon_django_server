@@ -1,4 +1,6 @@
+#-*- coding:utf-8 -*-
 from rest_framework import generics
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
@@ -12,6 +14,27 @@ from .permissions import IsOwnerOrSuperUser
 
 # Create your views here
 class SocialSignUpOrIn(generics.CreateAPIView):
+    """
+    페이스북 토큰으로 로그인
+    
+    가능 메소드 : [ get ]
+    
+    get : 페이스북 토큰으로 로그인<br>
+    예시 : <br>
+    {\<br>
+        "username\":\"facebook_725109100996336\",\<br>
+        "email\":\"pjo901018@naver.com\",\<br>
+        "userinfo\":<br>
+        {\<br>
+            "age_range\":\"min\",\<br>
+            "gender\":\"male\",<br>
+            \"pic_url\":\"ht",
+            "tps://scontent.xx.fbcdn.net/v/t1.0-1/p50x50/14202642_625021034338477_6992400572239206628_n.jpg?oh=bd2188618ba461bdb2a691b3d20165",
+            "19&oe=598597CF\"<br>
+        },<br>
+        \"token\":\"6aeb01e64263f9c4cd85b8c8e1097f8a0868dff9\"<br>
+    }"
+    """
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
 
@@ -65,6 +88,12 @@ class UserSignUpOrIn(generics.CreateAPIView):
     # def auto_create_pwd(self):
     #     return "1234qwer"
 
+    def get_token(self, data):
+        user = User.objects.filter(username=data['username'])
+        token, created = Token.objects.get_or_create(user=user)
+        print("token : "+token.key)
+        return token.key
+
     def perform_create(self, serializer):
         serializer.is_valid()
         user = serializer.save()
@@ -91,8 +120,9 @@ class UserSignUpOrIn(generics.CreateAPIView):
             serializer = self.serializer_class(user)
 
             # return self.perform_create(serializer)
-
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            response = serializer.data
+            response['token'] = self.get_token(serializer.data)
+            return Response(response, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             pass
 
@@ -100,7 +130,9 @@ class UserSignUpOrIn(generics.CreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        response = serializer.data
+        response['token'] = self.get_token(serializer.data)
+        return Response(response, status=status.HTTP_201_CREATED, headers=headers)
 
 class UserSignedCheck(generics.CreateAPIView):
     from api.serializers import UserSignedSerializer
