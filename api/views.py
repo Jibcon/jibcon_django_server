@@ -70,10 +70,16 @@ class SocialSignUpOrIn(generics.CreateAPIView):
         if type == 'facebook':
             from social import facebook
             userinfo = facebook.get_userinfo_from_facebook(token)
+            if 'error' in userinfo:
+                return Response(userinfo['error'],
+                         status=status.HTTP_400_BAD_REQUEST)
 
         response = self.post_to_user_sign_up_or_in(userinfo)
 
-        return Response(response.json(), status=status.HTTP_200_OK)
+        if response.ok:
+            return Response(response.json(), status=response.status_code)
+        else:
+            return response
 
 class UserInfo(generics.ListAPIView):
     serializer_class = UserSerializer
@@ -90,14 +96,17 @@ class UserSignUpOrIn(generics.CreateAPIView):
     # def auto_create_pwd(self):
     #     return "1234qwer"
 
-    def get_token(self, data):
+    def plus_token_to_data(self, data):
         user = User.objects.filter(username=data['username']).first()
         token, created = Token.objects.get_or_create(user=user)
         print("token : "+token.key)
-        return token.key
+
+        data['token'] = token.key
+        return data
 
     def perform_create(self, serializer):
-        serializer.is_valid()
+
+        serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
         from .models import UserInfo
@@ -107,6 +116,7 @@ class UserSignUpOrIn(generics.CreateAPIView):
                 gender=self.request.data['gender'],
                 age_range= self.request.data['age_range']
                                   )
+        return serializer
 
     def post(self, request, *args, **kwargs):
         log = "request data : "
@@ -114,28 +124,25 @@ class UserSignUpOrIn(generics.CreateAPIView):
             log = log + each + ','
         print(log)
 
+
+        data = request.data.dict()
+
         try :
             user = User.objects.get(
-                username=request.data.get('username'),
+                username=data.get('username'),
             )
 
             serializer = self.serializer_class(user)
 
-            # return self.perform_create(serializer)
-            response = serializer.data
-            response['token'] = self.get_token(serializer.data)
-            return Response(response, status=status.HTTP_200_OK)
+            response = self.plus_token_to_data(serializer.data)
+            return Response(data=response, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            pass
+            serializer = self.get_serializer(data=data)
+            serializer = self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
 
-        serializer = self.get_serializer(data=request.data)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-
-        response = serializer.data
-        response['token'] = self.get_token(serializer.data)
-        # return Response(response, status=status.HTTP_201_CREATED, headers=headers)
-        return response
+            response = self.plus_token_to_data(serializer.data)
+            return Response(data=response, status=status.HTTP_201_CREATED, headers=headers)
 
 class UserSignedCheck(generics.CreateAPIView):
     from api.serializers import UserSignedSerializer

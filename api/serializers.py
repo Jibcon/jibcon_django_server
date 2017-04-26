@@ -13,6 +13,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = (
+            # '__all__'
             'age_range',
             'gender',
             'pic_url',
@@ -25,14 +26,13 @@ class UserSerializer(serializers.ModelSerializer):
         from django.contrib.auth.models import User
         model = User
         fields = (
+            # '__all__',
             'username',
             'email',
             'userinfo',
-            # todo unicode
-        # utf-8 = unicode(euckr, 'euc-kr').encode('utf-8')
-
-            # 'first_name',
-            # 'last_name',
+            'first_name',
+            'last_name',
+            # 'auth_token'
                   )
 
 class UserSignedSerializer(serializers.Serializer):

@@ -35,8 +35,10 @@ def get_userinfo_from_facebook(token):
         r = requests.get(URL, params=params)
         r = r.json()
     except:
-        pass
+        print(r['error'])
+        return r
 
+    # utf-8 = unicode(euckr, 'euc-kr').encode('utf-8')
     if 'id' in r:
         print("id is not None")
         pic_request_url = "https://graph.facebook.com/" + r['id']+"/picture"
@@ -44,10 +46,11 @@ def get_userinfo_from_facebook(token):
     else:
         print("id is None, invalid facebook token")
         # error
-        return
+        return r
 
     # 자동생성아디 facebook_id
     r['username'] = social_type+"_"+r['id']
+    print('generated username : '+r['username'])
     del r['id']
 
     return {**r, **{'pic_url': pic_url}}
