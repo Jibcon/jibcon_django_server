@@ -89,7 +89,7 @@ class UserSignUpOrIn(generics.CreateAPIView):
     #     return "1234qwer"
 
     def get_token(self, data):
-        user = User.objects.filter(username=data['username'])
+        user = User.objects.filter(username=data['username']).first()
         token, created = Token.objects.get_or_create(user=user)
         print("token : "+token.key)
         return token.key
