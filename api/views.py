@@ -54,7 +54,7 @@ class SocialSignUpOrIn(generics.CreateAPIView):
             endpoints = "api/user_sign_up_or_in/"
             import requests
             response = requests.post(domain + endpoints, data=userinfo)
-            return Response(response)
+            return response
         except:
             pass
 
@@ -71,7 +71,9 @@ class SocialSignUpOrIn(generics.CreateAPIView):
             from social import facebook
             userinfo = facebook.get_userinfo_from_facebook(token)
 
-        return self.post_to_user_sign_up_or_in(userinfo)
+        response = self.post_to_user_sign_up_or_in(userinfo)
+
+        return Response(response.json(), status=status.HTTP_200_OK)
 
 class UserInfo(generics.ListAPIView):
     serializer_class = UserSerializer
@@ -132,7 +134,8 @@ class UserSignUpOrIn(generics.CreateAPIView):
 
         response = serializer.data
         response['token'] = self.get_token(serializer.data)
-        return Response(response, status=status.HTTP_201_CREATED, headers=headers)
+        # return Response(response, status=status.HTTP_201_CREATED, headers=headers)
+        return response
 
 class UserSignedCheck(generics.CreateAPIView):
     from api.serializers import UserSignedSerializer
