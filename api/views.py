@@ -210,7 +210,7 @@ class DeviceList(mixins.ListModelMixin,
             return Response({'detail': "Unexpected arguments", 'args': ['deviceType']},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        data = request.data.dict()
+        data = request.data.copy()
         data['user'] = request.user.id
         serializer = self.serializer_class(data=data)
         serializer = self.perform_create(serializer)
