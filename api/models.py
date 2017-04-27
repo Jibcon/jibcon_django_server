@@ -10,10 +10,11 @@ from rest_framework.authtoken.models import Token
 
 class UserInfo(models.Model):
      user = models.OneToOneField(settings.AUTH_USER_MODEL)
+     full_name = models.CharField(max_length=20, default='')
      age_range = models.CharField(max_length=20, default='')
      gender = models.CharField(default='', max_length=10)
      pic_url = models.URLField(default='')
-
+     locale = models.CharField(max_length=10, default='')
      # def
 
 variableHouseTypes = [
@@ -42,5 +43,6 @@ class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     deviceCom = models.CharField(max_length=255,default="찬주 일렉트로닉스")
     deviceName = models.CharField(max_length=255,default="동그라미플러그")
+    deviceWifiAddr = models.CharField(max_length=255,default="127.0.0.0")
     deviceType = models.CharField(max_length=255,default=variableDeviceTypes[0])
     deviceOnOffState = models.BooleanField(default=False)

@@ -13,10 +13,10 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = (
-            # '__all__'
-            'age_range',
-            'gender',
-            'pic_url',
+            '__all__'
+            # 'age_range',
+            # 'gender',
+            # 'pic_url',
         )
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,6 +32,11 @@ class UserSerializer(serializers.ModelSerializer):
             'userinfo',
             'first_name',
             'last_name',
+            'groups',
+            'user_permissions',
+            'is_superuser',
+            'last_login',
+            'date_joined',
             # 'auth_token'
                   )
 
@@ -53,16 +58,12 @@ class DeviceSerializer(serializers.ModelSerializer):
         from .models import Device
         model = Device
         fields = (
-            'id',
-            'deviceCom',
-            'deviceName',
-            'deviceType',
-            'deviceOnOffState',
-            'user_id',
+            '__all__'
         )
 
 class HouseSerializer(serializers.ModelSerializer):
-    adminUserName = serializers.SerializerMethodField('get_adminuser_name')
+    adminUser = UserSerializer(read_only=True)
+    # adminUserName = serializers.SerializerMethodField('get_adminuser_name')
 
     class Meta:
         from .models import House
@@ -74,11 +75,10 @@ class HouseSerializer(serializers.ModelSerializer):
         'houseIntro',
         'houseLocation',
         'adminUser',
-        'adminUserName',
         )
 
-    def get_adminuser_name(self, obj):
-        if (obj.adminUser):
-            return obj.adminUser.get_full_name()
-        else:
-            return ""
+    # def get_adminuser_name(self, obj):
+    #     if (obj.adminUser):
+    #         return obj.adminUser.get_full_name()
+    #     else:
+    #         return ""

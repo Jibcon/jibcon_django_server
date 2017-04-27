@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+import json
+
 import requests
 
 
@@ -39,6 +41,7 @@ def get_userinfo_from_facebook(token):
         return r
 
     # utf-8 = unicode(euckr, 'euc-kr').encode('utf-8')
+
     if 'id' in r:
         print("id is not None")
         pic_request_url = "https://graph.facebook.com/" + r['id']+"/picture"
@@ -47,6 +50,9 @@ def get_userinfo_from_facebook(token):
         print("id is None, invalid facebook token")
         # error
         return r
+
+    r['age_range'] = json.dumps(r['age_range']) # todo dict to modelfield
+    print('age_range' + r['age_range'])
 
     # 자동생성아디 facebook_id
     r['username'] = social_type+"_"+r['id']

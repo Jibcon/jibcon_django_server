@@ -106,6 +106,10 @@ class UserSignUpOrIn(generics.CreateAPIView):
 
     def perform_create(self, serializer):
 
+        def get_full_name(first,last):
+            # if locale todo
+            return last+first
+
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
@@ -114,7 +118,9 @@ class UserSignUpOrIn(generics.CreateAPIView):
                 user = user,
                 pic_url=self.request.data['pic_url'],
                 gender=self.request.data['gender'],
-                age_range= self.request.data['age_range']
+                age_range= self.request.data['age_range'],
+                locale = self.request.data['locale'],
+                full_name = self.request.data['name']
                                   )
         return serializer
 
