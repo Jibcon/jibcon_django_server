@@ -177,7 +177,6 @@ class UserSignedCheck(generics.CreateAPIView):
         username = request.data['username']
         token = request.data['token']
 
-
         serializer = self.serializer_class({ "signed" : self.is_signed(username, token) })
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -193,9 +192,10 @@ class DeviceList(mixins.ListModelMixin,
     serializer_class = DeviceSerializer
 
     def perform_create(self, serializer):
-        serializer.save(
-            user=self.request.user,
-        )
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return serializer
 
     def is_valid_requestbody(self):
         # todo implement
@@ -210,7 +210,13 @@ class DeviceList(mixins.ListModelMixin,
             return Response({'detail': "Unexpected arguments", 'args': ['deviceType']},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        return self.create(request, *args, **kwargs)
+        data = request.data.dict()
+        data['user'] = request.user.id
+        serializer = self.serializer_class(data=data)
+        serializer = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 class DeviceDetail(RetrieveUpdateDestroyAPIView):
