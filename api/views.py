@@ -1,40 +1,31 @@
 #-*- coding:utf-8 -*-
+from drf_autodocs.decorators import format_docstring
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.models import User
-from django.http import HttpResponse
-from api.serializers import UserSerializer
+
+from api.docs.request_response_examples import *
+from api.serializers import UserSerializer, UserSignedSerializer, SocialTokenSerializer
 from .serializers import DeviceSerializer
 from .models import Device, UserInfo
 from .permissions import IsOwnerOrSuperUser
 
 
 # Create your views here
+@format_docstring(post_SocialSignUpOrIn_request, response_example=post_SocialSignUpOrIn_response)
 class SocialSignUpOrIn(generics.CreateAPIView):
     """
     페이스북 토큰으로 로그인
     
-    가능 메소드 : [ get ]
+    가능 메소드 : [ POST ]
     
-    get : 페이스북 토큰으로 로그인<br>
-    예시 : <br>
-    {\<br>
-        "username\":\"facebook_725109100996336\",\<br>
-        "email\":\"pjo901018@naver.com\",\<br>
-        "userinfo\":<br>
-        {\<br>
-            "age_range\":\"min\",\<br>
-            "gender\":\"male\",<br>
-            \"pic_url\":\"ht",
-            "tps://scontent.xx.fbcdn.net/v/t1.0-1/p50x50/14202642_625021034338477_6992400572239206628_n.jpg?oh=bd2188618ba461bdb2a691b3d20165",
-            "19&oe=598597CF\"<br>
-        },<br>
-        \"token\":\"6aeb01e64263f9c4cd85b8c8e1097f8a0868dff9\"<br>
-    }"
+    Request: {}
+    Response: {response_example}
     """
+
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
 
@@ -81,7 +72,17 @@ class SocialSignUpOrIn(generics.CreateAPIView):
         else:
             return response
 
+@format_docstring(get_user_info_request, response_example=post_SocialSignUpOrIn_response)
 class UserInfo(generics.ListAPIView):
+    """
+    User 정보
+    
+    가능 메소드 : [ GET ]
+    
+    Request: {}
+    Response: {response_example}
+    """
+
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
     # queryset = User.objects.all()
@@ -90,6 +91,9 @@ class UserInfo(generics.ListAPIView):
         return User.objects.filter(id=self.request.user.id)
 
 class UserSignUpOrIn(generics.CreateAPIView):
+    """
+    서버 내부 호출용
+    """
     serializer_class = UserSerializer
     permission_classes = (AllowAny,)
 
@@ -150,40 +154,45 @@ class UserSignUpOrIn(generics.CreateAPIView):
             response = self.plus_token_to_data(serializer.data)
             return Response(data=response, status=status.HTTP_201_CREATED, headers=headers)
 
+
+@format_docstring(get_user_signed_check_request, response_example=get_user_signed_check_response)
 class UserSignedCheck(generics.CreateAPIView):
-    from api.serializers import UserSignedSerializer
+    """
+    User 로그인여부 확인(토큰만료검사)
+
+    가능 메소드 : [ GET ]
+
+    Request: {}
+    Response: {response_example}
+    """
     serializer_class = UserSignedSerializer
     permission_classes = (AllowAny,)
 
-    def is_signed(self, username, token):
-        # todo implement validation
-        if True:
-            print('is_signed: True')
-            return True
-        else:
-            print('is_signed: False')
-            return False
-
-    def is_valid_requestbody(self):
-        # todo implement
-        return True
-
-    def post(self, request, *args, **kwargs):
-        if not self.is_valid_requestbody():
-            return Response({'detail': "Unexpected arguments", 'args': ['username', 'token']},
-                            status=status.HTTP_400_BAD_REQUEST)
-
+    def get(self, request, *args, **kwargs):
         # phonenumber or email
-        username = request.data['username']
-        token = request.data['token']
-
-        serializer = self.serializer_class({ "signed" : self.is_signed(username, token) })
+        serializer = self.serializer_class({ "signed" : self.request.user.is_authenticated })
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 from rest_framework import mixins
+@format_docstring(get_user_info_request, response_example=get_devices_response,
+                  post_request_example=post_devices_request,
+                  post_response_example=post_devices_response)
 class DeviceList(mixins.ListModelMixin,
                 mixins.CreateModelMixin,
                 generics.GenericAPIView):
+    """
+    Device List
+    
+    가능 메소드 : [ GET, Post ]
+
+    [ GET ]
+    Request: {}
+    Response: {response_example}
+    
+    [ POST ]
+    Request: {post_request_example}
+    Response: {post_response_example}
+    """
 
     permission_classes = (IsAuthenticated,IsOwnerOrSuperUser)
     from .models import Device
@@ -219,6 +228,7 @@ class DeviceList(mixins.ListModelMixin,
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
+
 class DeviceDetail(RetrieveUpdateDestroyAPIView):
     queryset = Device.objects.all().order_by('-uploaded_date')
     serializer_class = DeviceSerializer

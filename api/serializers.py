@@ -40,6 +40,10 @@ class UserSerializer(serializers.ModelSerializer):
             # 'auth_token'
                   )
 
+class SocialTokenSerializer(serializers.Serializer):
+    type = serializers.CharField(required=True)
+    token = serializers.CharField(required=True)
+
 class UserSignedSerializer(serializers.Serializer):
     signed = serializers.BooleanField(required=True)
 
