@@ -58,13 +58,13 @@ DEVICECNTNAME_CHOICES = (
 
 class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    deviceCom = models.CharField(choices=DEVICECOM_CHOICES, max_length=255, default=DEVICECOM_CHOICES[0])
-    deviceName = models.CharField(choices=DEVICENAME_CHOICES, max_length=255, default=DEVICENAME_CHOICES[0])
-    deviceType = models.CharField(choices=DEVICETYPE_CHOICES, max_length=255, default=DEVICETYPE_CHOICES[0])
+    deviceCom = models.CharField(choices=DEVICECOM_CHOICES, max_length=255, default=DEVICECOM_CHOICES[0][0])
+    deviceName = models.CharField(choices=DEVICENAME_CHOICES, max_length=255, default=DEVICENAME_CHOICES[0][0])
+    deviceType = models.CharField(choices=DEVICETYPE_CHOICES, max_length=255, default=DEVICETYPE_CHOICES[0][0])
     deviceWifiAddr = models.CharField(max_length=255,default="127.0.0.0")
     deviceOnOffState = models.BooleanField(default=False)
     subscribeOnOffState = models.BooleanField(default=False)
     roomName = models.CharField(max_length=255,default="거실")
-    aeName = models.CharField(choices=DEVICEAENAME_CHOICES, max_length=255,default=DEVICEAENAME_CHOICES[0])
-    cntName = models.CharField(choices=DEVICECNTNAME_CHOICES, max_length=255,default=DEVICECNTNAME_CHOICES[0])
+    aeName = models.CharField(choices=DEVICEAENAME_CHOICES, max_length=255,default=DEVICEAENAME_CHOICES[0][0])
+    cntName = models.CharField(choices=DEVICECNTNAME_CHOICES, max_length=255,default=DEVICECNTNAME_CHOICES[0][0])
     content = models.CharField(max_length=255,default="1")
