@@ -15,7 +15,9 @@ class UserInfo(models.Model):
      gender = models.CharField(default='', max_length=10)
      pic_url = models.URLField(default='')
      locale = models.CharField(max_length=10, default='')
-     # def
+
+     def __str__(self):
+         return self.full_name
 
 variableHouseTypes = [
     "아파트",
@@ -68,3 +70,6 @@ class Device(models.Model):
     aeName = models.CharField(choices=DEVICEAENAME_CHOICES, max_length=255,default=DEVICEAENAME_CHOICES[0][0])
     cntName = models.CharField(choices=DEVICECNTNAME_CHOICES, max_length=255,default=DEVICECNTNAME_CHOICES[0][0])
     content = models.CharField(max_length=255,default="1")
+
+    def __str__(self):
+        return self.user.username + " " + self.deviceName
