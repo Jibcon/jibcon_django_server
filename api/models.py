@@ -68,7 +68,6 @@ class Device(models.Model):
     roomName = models.CharField(max_length=255,default="거실")
     aeName = models.CharField(choices=DEVICEAENAME_CHOICES, max_length=255,default=DEVICEAENAME_CHOICES[0][0])
     cntName = models.CharField(choices=DEVICECNTNAME_CHOICES, max_length=255,default=DEVICECNTNAME_CHOICES[0][0])
-    content = models.CharField(max_length=255,default="1")
 
     def __str__(self):
         return self.user.username + " " + self.deviceName
