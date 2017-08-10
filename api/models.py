@@ -37,6 +37,7 @@ class House(models.Model):
 DEVICENAME_CHOICES = (
     ("led", "LED전등"),
     ("ultra", "초음파감지기"),
+    ("humidity", "온습도측정"),
 )
 
 DEVICECOM_CHOICES = (
@@ -45,17 +46,20 @@ DEVICECOM_CHOICES = (
 
 DEVICETYPE_CHOICES = (
     ("bulb", "전등"),
-    ("sensor", "센서"),
+    ("ultrasensor", "초음파센서"),
+    ("humiditysensor", "온습도센서"),
 )
 
 DEVICEAENAME_CHOICES = (
     ("ae-secondled", "ae-secondled"),
     ("ae-jyp", "ae-jyp"),
+    ("ae-humidity", "ae-humidity"),
 )
 
 DEVICECNTNAME_CHOICES = (
     ("cnt-led", "cnt-led"), # _req _res 둘다만들기
     ("cnt-ultra", "cnt-ultra"),
+    ("cnt-dht", "cnt-dht"),
 )
 
 class Device(models.Model):
