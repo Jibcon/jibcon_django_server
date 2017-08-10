@@ -51,9 +51,9 @@ DEVICETYPE_CHOICES = (
 )
 
 DEVICEAENAME_CHOICES = (
-    ("ae-secondled", "ae-secondled"),
-    ("ae-jyp", "ae-jyp"),
-    ("ae-humidity", "ae-humidity"),
+    ("ae-smarts", "ae-smarts"),
+    ("ae-smarts", "ae-smarts"),
+    ("ae-smarts", "ae-smarts"),
 )
 
 DEVICECNTNAME_CHOICES = (
