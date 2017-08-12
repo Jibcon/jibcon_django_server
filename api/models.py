@@ -82,3 +82,22 @@ class Device(models.Model):
 
     def __str__(self):
         return self.user.username + " " + self.deviceName
+
+
+ROUTINE_CONDITIONMETHOD_CHOICES = (
+    ("larger", ">"),
+    ("smaller", "<"),
+    ("equal", "="),
+)
+
+class Routine(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255,default="현관문에 사람이 지나가면 Phillips Hue 전구를 켜줘.")
+    sensor = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s_related_sensor')
+    conditionMethod = models.CharField(choices=ROUTINE_CONDITIONMETHOD_CHOICES, max_length=255, default=DEVICECOM_CHOICES[0][0])
+    value = models.CharField(max_length=255,default="0.1")
+    unit = models.CharField(max_length=255,default="m")
+    actuator = models.ForeignKey(Device, on_delete=models.CASCADE, related_name='%(app_label)s_%(class)s_related_actuator')
+
+    def __str__(self):
+        return self.user.username + " " + self.title
