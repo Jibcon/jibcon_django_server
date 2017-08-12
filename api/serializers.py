@@ -86,3 +86,11 @@ class HouseSerializer(serializers.ModelSerializer):
     #         return obj.adminUser.get_full_name()
     #     else:
     #         return ""
+
+class RoutineSerializer(serializers.ModelSerializer):
+    class Meta:
+        from .models import Routine
+        model = Routine
+        fields = (
+            '__all__'
+        )

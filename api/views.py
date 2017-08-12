@@ -8,9 +8,9 @@ from rest_framework import status
 from django.contrib.auth.models import User
 
 from api.docs.request_response_examples import *
-from api.serializers import UserSerializer, UserSignedSerializer, SocialTokenSerializer
+from api.serializers import UserSerializer, UserSignedSerializer, SocialTokenSerializer, RoutineSerializer
 from .serializers import DeviceSerializer
-from .models import Device, UserInfo
+from .models import Device, UserInfo, Routine
 from .permissions import IsOwnerOrSuperUser
 
 
@@ -270,4 +270,41 @@ class HouseList(mixins.ListModelMixin,
 class HouseDetail(RetrieveUpdateDestroyAPIView):
     queryset = House.objects.all()
     serializer_class = DeviceSerializer
+    permission_classes = (IsAuthenticated, IsOwnerOrSuperUser)
+
+
+class RoutineList(mixins.ListModelMixin,
+                 mixins.CreateModelMixin,
+                 generics.GenericAPIView):
+
+    permission_classes = (IsAuthenticated, IsOwnerOrSuperUser)
+    queryset = Routine.objects.all()
+
+    serializer_class = RoutineSerializer
+
+    def perform_create(self, serializer):
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return serializer
+
+    def get(self, request, *args, **kwargs):
+        self.queryset = self.queryset.filter(user=request.user)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['user'] = request.user.id
+        serializer = self.serializer_class(data=data)
+        serializer = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+
+
+class RoutineDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Routine.objects.all().order_by('-uploaded_date')
+    serializer_class = RoutineSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrSuperUser)
