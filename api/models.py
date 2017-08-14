@@ -45,14 +45,14 @@ DEVICENAME_CHOICES = (
     ("led", "LED전등"),
     ("ultra", "초음파감지기"),
     ("humidity", "온습도측정"),
-    ("hue", "hue"),
+    ("Philips Hue 전구", "hue"),
 )
 
 DEVICETYPE_CHOICES = (
     ("bulb", "전등"),
     ("ultrasensor", "초음파센서"),
     ("humiditysensor", "온습도센서"),
-    ("bulb", "전등"),
+    ("hue-bulb", "전등"),
 )
 
 DEVICEAENAME_CHOICES = (
@@ -101,3 +101,12 @@ class Routine(models.Model):
 
     def __str__(self):
         return self.user.username + " " + self.title
+#
+# class DeviceCompany(models.Model):
+#     englishName = models.CharField(unique=True, max_length=255, default="smArts")
+#     koreanName = models.CharField(unique=True, max_length=255, default="smArts")
+#
+#     def __str__(self):
+#         return self.englishName
+#
+# class Device
