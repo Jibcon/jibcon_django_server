@@ -39,6 +39,7 @@ DEVICECOM_CHOICES = (
     ("smArts", "smArts"),
     ("smArts", "smArts"),
     ("Philips", "Philips"),
+    ("Philips", "Philips"),
 )
 
 DEVICENAME_CHOICES = (
@@ -46,16 +47,19 @@ DEVICENAME_CHOICES = (
     ("ultra", "초음파감지기"),
     ("humidity", "온습도측정"),
     ("Philips Hue 전구", "hue"),
+    ("Philips Hue 전구 - 현관", "hue-현관"),
 )
 
 DEVICETYPE_CHOICES = (
     ("bulb", "전등"),
     ("ultrasensor", "초음파센서"),
     ("humiditysensor", "온습도센서"),
-    ("hue-bulb", "전등"),
+    ("hue-bulb", "hue전등"),
+    ("hue-bulb-현관", "hue전등-현관"),
 )
 
 DEVICEAENAME_CHOICES = (
+    ("ae-smarts", "ae-smarts"),
     ("ae-smarts", "ae-smarts"),
     ("ae-smarts", "ae-smarts"),
     ("ae-smarts", "ae-smarts"),
@@ -66,6 +70,7 @@ DEVICECNTNAME_CHOICES = (
     ("cnt-led", "cnt-led"), # _req _res 둘다만들기
     ("cnt-ultra", "cnt-ultra"),
     ("cnt-dht", "cnt-dht"),
+    ("cnt-hue", "cnt-hue"),
     ("cnt-hue", "cnt-hue"),
 )
 
